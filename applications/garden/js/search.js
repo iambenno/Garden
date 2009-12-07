@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
    // Set up paging
    if ($.morepager)
       $('.MorePager').morepager({
-         pageContainerSelector: 'ul.SearchResults'
+         pageContainerSelector: 'ul.Search:last'
       });
 
 });

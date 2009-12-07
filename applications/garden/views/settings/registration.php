@@ -63,7 +63,6 @@ echo $this->Form->Errors();
                <td class="Alt"><?php echo $this->Form->TextBox('Garden.Registration.CaptchaPrivateKey'); ?></td>
             </tr>
          </tbody>
-       </table>
    </li>
    <li id="InvitationExpiration">
       <?php
