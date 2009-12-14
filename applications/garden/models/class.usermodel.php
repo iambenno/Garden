@@ -726,6 +726,9 @@ class Gdn_UserModel extends Gdn_Model {
     * @return object
     */
    public function ValidateCredentials($Email = '', $ID = 0, $Password) {
+      $this->EventArguments['Credentials'] = array('Email'=>$Email, 'ID'=>$ID, 'Password'=>$Password);
+      $this->FireEvent('BeforeValidateCredentials');
+
       if (!$Email && !$ID)
          throw new Exception('The email or id is required');
 
@@ -912,7 +915,7 @@ class Gdn_UserModel extends Gdn_Model {
          ->FirstRow();
 
       // If CountInvitations is null (ie. never been set before) or it is a new month since the DateSetInvitations
-      if (!is_numeric($User->CountInvitations) || Format::Date($User->DateSetInvitations, 'n Y') != Format::Date('', 'n Y')) {
+      if (!is_string($User->CountInvitations) || Format::Date($User->DateSetInvitations, 'n Y') != Format::Date('', 'n Y')) {
          // Reset CountInvitations and DateSetInvitations
          $this->SQL->Put(
             $this->Name,
