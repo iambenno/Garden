@@ -70,15 +70,22 @@ jQuery(document).ready(function($) {
    
    // Set the max chars in the about form.
    $('form.About textarea').setMaxChars(1000);
+   
    // Popup the picture form when the link is clicked
    $('li.PictureLink a').popup({hijackForms: false, afterLoad: function() {
-      $('.Popup :input').change(function() {
-         $('.Popup :input').click();
-         $('.Popup .Content').empty();
-         $('.Popup .Body').children().hide().end().append('<div class="Loading">&nbsp;</div>');
-      });
       $('.Popup :submit').hide();
+      $('.Popup :input').change(function() {
+         $('.Popup form').submit();
+         $('.Popup .Body').html('<div class="Loading">&nbsp;</div>');
+      });
    }});
+   
+   // Ajax invitation uninvites and send agains if they're in a popup
+   $('div.Popup a.Uninvite, div.Popup a.SendAgain').live('click', function() {
+      var btn = this;
+      $('div.Popup .Content').load($(btn).attr('href') + '?DeliveryType=VIEW');
+      return false;
+   });
    
    // Thumbnail Cropper
    // Popup the picture form when the link is clicked
