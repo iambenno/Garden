@@ -1,11 +1,11 @@
 <?php if (!defined('APPLICATION')) exit();
 /*
-Copyright 2008, 2009 Mark O'Sullivan
+Copyright 2008, 2009 Vanilla Forums Inc.
 This file is part of Garden.
 Garden is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 Garden is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with Garden.  If not, see <http://www.gnu.org/licenses/>.
-Contact Mark O'Sullivan at mark [at] lussumo [dot] com
+Contact Vanilla Forums Inc. at support [at] vanillaforums [dot] com
 */
 
 /**
@@ -17,7 +17,7 @@ Contact Mark O'Sullivan at mark [at] lussumo [dot] com
  * @license http://www.opensource.org/licenses/gpl-2.0.php GPL
  * @package Garden
  * @version @@GARDEN-VERSION@@
- * @namespace Lussumo.Garden.Core
+ * @namespace Garden.Core
  */
 class Format {
 
@@ -40,9 +40,13 @@ class Format {
     *  looking at.
     * @return string
     */
-   public static function ActivityHeadline($Activity, $ProfileUserID = '') {
-      $Session = Gdn::Session();
-      if ($Session->UserID == $Activity->ActivityUserID) {
+   public static function ActivityHeadline($Activity, $ProfileUserID = '', $ViewingUserID = '') {
+      if ($ViewingUserID == '') {
+         $Session = Gdn::Session();
+         $ViewingUserID = $Session->IsValid() ? $Session->UserID : -1;
+      }
+      
+      if ($ViewingUserID == $Activity->ActivityUserID) {
          $ActivityName = $ActivityNameP = Gdn::Translate('You');
       } else {
          $ActivityName = $Activity->ActivityName;
@@ -56,14 +60,11 @@ class Format {
       }
       $Gender = Translate($Activity->ActivityGender == 'm' ? 'his' : 'her');
       $Gender2 = Translate($Activity->ActivityGender == 'm' ? 'he' : 'she');
-      if (
-         $Session->IsValid()
-         && ($Session->UserID == $Activity->RegardingUserID ||
-            ($Activity->RegardingUserID == '' && $Activity->ActivityUserID == $Session->UserID))
-      ) $Gender = $Gender2 = 'your';
+      if ($ViewingUserID == $Activity->RegardingUserID || ($Activity->RegardingUserID == '' && $Activity->ActivityUserID == $ViewingUserID))
+         $Gender = $Gender2 = 'your';
 
       $IsYou = FALSE;
-      if ($Session->UserID == $Activity->RegardingUserID) {
+      if ($ViewingUserID == $Activity->RegardingUserID) {
          $IsYou = TRUE;
          $RegardingName = Gdn::Translate('you');
          $RegardingNameP = Gdn::Translate('your');
