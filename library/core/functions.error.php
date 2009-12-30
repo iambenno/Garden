@@ -85,14 +85,14 @@ function ErrorHandler($ErrorNumber, $Message, $File, $Line, $Arguments) {
                $CssPaths[] = PATH_THEMES . DS . $CurrentTheme . DS . 'design' . DS . 'error.css';
                
                // Look for Master View in the theme folder:
-               $MasterViewPaths[] = PATH_THEMES . DS . $CurrentTheme . DS . 'views' . DS . 'error.master';
+               $MasterViewPaths[] = PATH_THEMES . DS . $CurrentTheme . DS . 'views' . DS . 'error.master.php';
             }
          }
             
          // Look for CSS in the garden design folder.
          $CssPaths[] = PATH_APPLICATIONS . DS . 'garden' . DS . 'design' . DS . 'error.css';
          // Look for Master View in the garden view folder.
-         $MasterViewPaths[] = PATH_APPLICATIONS . DS . 'garden' . DS . 'views' . DS . 'error.master';
+         $MasterViewPaths[] = PATH_APPLICATIONS . DS . 'garden' . DS . 'views' . DS . 'error.master.php';
          
          $CssPath = FALSE;
          $Count = count($CssPaths);
@@ -192,7 +192,7 @@ function ErrorHandler($ErrorNumber, $Message, $File, $Line, $Arguments) {
 
    echo '<h2>Need Help?</h2>
    <p>If you are a user of this website, you can report this message to a website administrator.</p>
-   <p>If you are an administrator of this website, you can get help at the <a href="http://lussumo.com/community/" target="_blank">Lussumo Community Forums</a>.</p>
+   <p>If you are an administrator of this website, you can get help at the <a href="http://vanillaforums.org/discussions/" target="_blank">Vanilla Community Forums</a>.</p>
    <h2>Additional information for support personnel:</h2>
    <ul>
       <li><strong>Application:</strong> ',APPLICATION,'</li>

@@ -56,6 +56,16 @@ a.NewDiscussion:hover {
 #Panel ul.Discussions {
    border: 0;
 }
+ul.PanelDiscussions li {
+   text-align: left;
+}
+ul.PanelDiscussions li a {
+   float: none;
+}
+ul.PanelDiscussions li strong {
+   display: block;
+}
+
 
 /* ============================================================== Discussions */
 
@@ -488,7 +498,7 @@ ul.Drafts li ul li.Title a.DeleteDraft {
    cursor: pointer;
    line-height: 100%;
 }
-ul.Drafts li ul li.Topic a.DeleteDraft:hover {
+ul.Drafts li ul li.Title a.DeleteDraft:hover {
    color: #333;
    border: 1px solid #888;
 }
