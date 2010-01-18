@@ -23,9 +23,9 @@
 								$Name .= '<span>'.$CountNotifications.'</span>';
 								
 							$this->Menu->AddLink('User', $Name, '/profile/{UserID}/{Username}', array('Garden.SignIn.Allow'));
-							$this->Menu->AddLink('SignOut', Gdn::Translate('Sign Out'), $Authenticator->SignOutUrl(), FALSE, array('class' => 'NonTab'));
+							$this->Menu->AddLink('SignOut', Gdn::Translate('Sign Out'), $Authenticator->SignOutUrl(), FALSE, array('class' => 'NonTab SignOut'));
 						} else {
-							$this->Menu->AddLink('Entry', Gdn::Translate('Sign In'), $Authenticator->SignInUrl($this->SelfUrl), FALSE, array('class' => 'NonTab'), array('class' => 'Popup'));
+							$this->Menu->AddLink('Entry', Gdn::Translate('Sign In'), $Authenticator->SignInUrl($this->SelfUrl), FALSE, array('class' => 'NonTab'), array('class' => 'SignInPopup'));
 						}
 						echo $this->Menu->ToString();
 					}
@@ -49,6 +49,7 @@
 			<div><?php
 				printf(Gdn::Translate('Powered by %s'), '<a href="http://vanillaforums.org"><span>Vanilla</span></a>');
 			?></div>
+			<?php $this->RenderAsset('Foot'); ?>
 		</div>
    </div>
 	<?php $this->FireEvent('AfterBody'); ?>

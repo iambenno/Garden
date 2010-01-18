@@ -63,27 +63,6 @@ if (!function_exists('AddActivity')) {
    }
 }
 
-if (!function_exists('Anchor')) {
-   /**
-    * Builds and returns an anchor tag.
-    */
-   function Anchor($Text, $Destination = '', $CssClass = '', $Attributes = '', $ForceAnchor = FALSE) {
-      if (!is_array($CssClass) && $CssClass != '')
-         $CssClass = array('class' => $CssClass);
-
-      if ($Destination == '' && $ForceAnchor === FALSE)
-         return $Text;
-      
-      if ($Attributes == '')
-         $Attributes = array();
-
-      if (substr($Destination, 0, 7) != 'http://' && ($Destination != '' || $ForceAnchor === FALSE))
-         $Destination = Url($Destination);
-
-      return '<a href="'.$Destination.'"'.Attribute($CssClass).Attribute($Attributes).'>'.$Text.'</a>';
-   }
-}
-
 if (!function_exists('ArrayCombine')) {
    /**
     * PHP's array_combine has a limitation that doesn't allow array_combine to
@@ -494,21 +473,6 @@ if (!function_exists('GetPostValue')) {
    }
 }
 
-if (!function_exists('Img')) {
-   /**
-    * Returns an img tag.
-    */
-   function Img($Image, $Attributes = '') {
-      if ($Attributes == '')
-         $Attributes = array();
-
-      if (substr($Image, 0, 7) != 'http://' && $Image != '')
-         $Image = Url($Image);
-
-      return '<img src="'.$Image.'"'.Attribute($Attributes).' />';
-   }
-}
-
 if (!function_exists('InArrayI')) {
    /**
     * Case-insensitive version of php's native in_array function.
@@ -637,38 +601,32 @@ if (!function_exists('ProxyRequest')) {
     */
    function ProxyRequest($Url, $PostFields = FALSE) {
       $Response = '';
-      
-      if (is_array($PostFields))
-         $PostFields = http_build_query($PostFields);
-      else
-         $PostFields = FALSE;
+      $Query = is_array($PostFields) ? http_build_query($PostFields) : '';
       
       if (function_exists('curl_init')) {
          $Handler = curl_init();
          curl_setopt($Handler, CURLOPT_URL, $Url);
          curl_setopt($Handler, CURLOPT_HEADER, 0);
          curl_setopt($Handler, CURLOPT_RETURNTRANSFER, 1);
-         if ($PostFields) {
+         if ($Query != '') {
             curl_setopt($Handler, CURLOPT_POST, 1);
-            curl_setopt($Handler, CURLOPT_POSTFIELDS, http_build_query($Fields));
+            curl_setopt($Handler, CURLOPT_POSTFIELDS, $Query);
          }
          $Response = curl_exec($Handler);
          curl_close($Handler);
       } else if (function_exists('fsockopen')) {
          $UrlParts = parse_url($Url);
-         $Host = $UrlParts['host'];
+         $Host = ArrayValue('host', $UrlParts, '');
          $Port = ArrayValue('port', $UrlParts, '80');
-         $Path = $UrlParts['path'];
+         $Path = ArrayValue('path', $UrlParts, '');
          $Referer = Gdn_Url::WebRoot(TRUE);
-         if ($PostFields)
-            $Path .= '?' . $PostFields;
       
          // Make the request
          $Pointer = @fsockopen($Host, $Port, $ErrorNumber, $Error);
          if (!$Pointer)
             throw new Exception(sprintf(Gdn::Translate('Encountered an error while making a request to the remote server (%1$s): [%2$s] %3$s'), $Url, $ErrorNumber, $Error));
          
-         $Header = "GET $Path HTTP/1.1\r\n" .
+         $Header = "GET $Path?$Query HTTP/1.1\r\n" .
             "Host: $Host\r\n" .
             // If you've got basic authentication enabled for the app, you're going to need to explicitly define the user/pass for this fsock call
             // "Authorization: Basic ". base64_encode ("username:password")."\r\n" . 
@@ -694,11 +652,11 @@ if (!function_exists('ProxyRequest')) {
 }
 
 if (!function_exists('RandomString')) {
-   function RandomString($Length) {
-      $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+   function RandomString($Length, $Characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') {
+      $CharLen = strlen($Characters) - 1;
       $String = '' ;
       for ($i = 0; $i < $Length; ++$i) {
-        $Offset = rand() % 35;
+        $Offset = rand() % $CharLen;
         $String .= substr($Characters, $Offset, 1);
       }
       return $String;
@@ -707,11 +665,13 @@ if (!function_exists('RandomString')) {
 
 if (!function_exists('Redirect')) {
    function Redirect($Destination) {
-      @ob_end_clean();
-      header("location: ".Url($Destination));
       // Close any db connections before exit
       $Database = Gdn::Database();
       $Database->CloseConnection();
+      // Clear out any previously sent content
+      @ob_end_clean();
+      // re-assign the location header
+      header("location: ".Url($Destination));
       // Exit
       exit();
    }
@@ -830,7 +790,8 @@ if (!function_exists('Url')) {
       static $RewriteUrls = NULL;
       if(is_null($RewriteUrls)) $RewriteUrls = ForceBool(Gdn::Config('Garden.RewriteUrls', FALSE));
       
-      if (substr($Destination, 0, 7) == 'http://') {
+      $Prefix = substr($Destination, 0, 7);
+      if (in_array($Prefix, array('http://', 'https:/'))) {
          return $Destination;
       } else if ($Destination == '#' || $Destination == '') {
          if ($WithDomain)
@@ -848,26 +809,6 @@ if (!function_exists('Url')) {
             
          $Paths[] = $Destination;
          return CombinePaths($Paths, '/');
-      }
-   }
-}
-
-if (!function_exists('UserAnchor')) {
-   function UserAnchor($User, $CssClass = '') {
-      if ($CssClass != '')
-         $CssClass = ' class="'.$CssClass.'"';
-
-      return '<a href="'.Url('/profile/'.$User->UserID.'/'.urlencode($User->Name)).'"'.$CssClass.'>'.$User->Name.'</a>';
-   }
-}
-
-if (!function_exists('UserPhoto')) {
-   function UserPhoto($User, $CssClass = '') {
-      $CssClass = $CssClass == '' ? '' : ' class="'.$CssClass.'"';
-      if ($User->Photo != '') {
-         return '<a href="'.Url('/profile/'.$User->UserID.'/'.urlencode($User->Name)).'"'.$CssClass.'><img src="'.Asset('uploads/n'.$User->Photo).'" alt="'.urlencode($User->Name).'" /></a>';
-      } else {
-         return '';
       }
    }
 }

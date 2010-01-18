@@ -43,7 +43,9 @@ $Configuration['Garden']['Authenticator']['RegisterUrl']        = '/entry/regist
 $Configuration['Garden']['Authenticator']['SignInUrl']          = '/entry/signin/?Target=%s';
 $Configuration['Garden']['Authenticator']['SignOutUrl']         = '/entry/leave/{Session_TransientKey}';
 $Configuration['Garden']['Errors']['LogEnabled']                = FALSE;
-$Configuration['Garden']['Errors']['LogFile']                   = PATH_CACHE . DS . 'error.log';
+$Configuration['Garden']['Errors']['LogFile']                   = '';
+$Configuration['Garden']['Errors']['MasterView']                = 'error.master.php';
+// $Configuration['Garden']['Errors']['MasterView']                = 'deverror.master.php'; // <-- Use this error master view when debugging
 $Configuration['Garden']['Registration']['Method']              = 'Basic'; // Options are: Basic, Captcha, Approval, Invitation
 $Configuration['Garden']['Registration']['DefaultRoles']        = array('8'); // The default role(s) to assign new users (4 is "Member")
 $Configuration['Garden']['Registration']['ApplicantRoleID']     = 4; // The "Applicant" RoleID.
@@ -79,6 +81,10 @@ $Configuration['Garden']['Preview']['MaxWidth']                 = 75;
 $Configuration['Garden']['Thumbnail']['Size']                   = 50;
 $Configuration['Garden']['Menu']['Sort']                        = array('Dashboard', 'Discussions', 'Activity', 'Conversations', 'User');
 $Configuration['Garden']['InputFormatter']                      = 'Html';
+
+// Default Preferences
+$Configuration['Preferences']['Email']['ConversationMessage']   = '1';
+$Configuration['Preferences']['Email']['AddedToConversation']   = '1';
 
 // Begin - HtmlPurifier Settings
 $Configuration['HtmlPurifier']['AutoFormat']['AutoParagraph']   = TRUE;

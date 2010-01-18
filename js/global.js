@@ -7,7 +7,14 @@ jQuery(document).ready(function($) {
       var d = new Date();
       $(this).val(d.getHours());
    });
+   
+   // Hide/Reveal the "forgot your password" form if the ForgotPassword button is clicked.
+   $('a.ForgotPassword').live('click', function() {
+      $('#Form_User_Password').slideToggle('fast');
+      return false;
+   });
 
+   // Grab a definition from hidden inputs in the page
    definition = function(definition, defaultVal, set) {
       if (defaultVal == null)
          defaultVal = definition;
@@ -27,7 +34,6 @@ jQuery(document).ready(function($) {
       return def;
    }
 
-
    // Main Menu dropdowns
    if ($.fn.menu)
       $('#Menu').menu({
@@ -38,14 +44,17 @@ jQuery(document).ready(function($) {
    // This turns any anchor with the "Popup" class into an in-page pop-up (the
    // view of the requested in-garden link will be displayed in a popup on the
    // current screen).
-   $('a.Popup').popup();
+   if ($.fn.popup)
+      $('a.Popup').popup();
    
    // This turns any anchor with the "Popdown" class into an in-page pop-up, but
    // it does not hijack forms in the popup.
-   $('a.Popdown').popup({hijackForms: false});
+   if ($.fn.popup)
+      $('a.Popdown').popup({hijackForms: false});
    
    // This turns SignInPopup anchors into in-page popups
-   $('a.SignInPopup').popup({containerCssClass:'SignInPopup'});
+   if ($.fn.popup)
+      $('a.SignInPopup').popup({containerCssClass:'SignInPopup'});
 
    // Make sure that message dismissalls are ajax'd
    $('a.Dismiss').live('click', function() {
@@ -66,7 +75,8 @@ jQuery(document).ready(function($) {
    // This turns any form into a "post-in-place" form so it is ajaxed to save
    // without a refresh. The form must be within an element with the "AjaxForm"
    // class.
-   $('.AjaxForm').handleAjaxForm();
+   if ($.fn.handleAjaxForm)
+      $('.AjaxForm').handleAjaxForm();
    
    // If a message group is clicked, hide it.
    $('div.Messages ul').live('click', function() {
@@ -123,6 +133,7 @@ jQuery(document).ready(function($) {
       });
    }
 
+   // Notify the user with a message
    inform = function(message, wrapInfo) {
       if(wrapInfo == undefined) {
          wrapInfo = true;
@@ -136,6 +147,8 @@ jQuery(document).ready(function($) {
             $(message).appendTo('body').show();
       }
    }
+   
+   // Generate a random string of specified length
    generateString = function(length) {
       if (length == null)
          length = 5;
@@ -150,6 +163,7 @@ jQuery(document).ready(function($) {
       return string;
    }
    
+   // Combine two paths and make sure that there is only a single directory concatenator
    combinePaths = function(path1, path2) {
       if (path1.substr(-1, 1) == '/')
          path1 = path1.substr(0, path1.length - 1);
@@ -203,6 +217,11 @@ jQuery(document).ready(function($) {
       var searchText = definition('Search', 'Search');
       if ($(this).val() == searchText)
          $(this).val('');      
+   });
+   
+   // Add a spinner onclick of buttons with this class
+   $('input.SpinOnClick').live('click', function() {
+      $(this).after('<span class="AfterButtonLoading">&nbsp;</span>').removeClass('SpinOnClick');
    });
 
 });
